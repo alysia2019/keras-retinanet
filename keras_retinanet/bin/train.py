@@ -237,7 +237,7 @@ def create_generators(args, preprocess_image):
             flip_y_chance=0.5,
         )
     else:
-        transform_generator = random_transform_generator(flip_x_chance=0.5)
+        transform_generator = None
 
     if args.dataset_type == 'coco':
         # import here to prevent unnecessary dependency on cocoapi
