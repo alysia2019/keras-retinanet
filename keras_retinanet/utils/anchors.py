@@ -29,11 +29,12 @@ class AnchorParameters:
         ratios  : List of ratios to use per location in a feature map.
         scales  : List of scales to use per location in a feature map.
     """
-    def __init__(self, sizes, strides, ratios, scales):
-        self.sizes   = sizes
-        self.strides = strides
-        self.ratios  = ratios
-        self.scales  = scales
+    def __init__(self, sizes, strides, ratios, scales, fixedheight):
+        self.sizes       = sizes
+        self.strides     = strides
+        self.ratios      = ratios
+        self.scales      = scales
+        self.fixedheight = fixedheight
 
     def num_anchors(self):
         return len(self.ratios) * len(self.scales)
@@ -43,10 +44,11 @@ class AnchorParameters:
 The default anchor parameters.
 """
 AnchorParameters.default = AnchorParameters(
-    sizes   = [32, 64, 128, 256, 512],
-    strides = [8, 16, 32, 64, 128],
-    ratios  = np.array([0.5, 1, 2], keras.backend.floatx()),
-    scales  = np.array([2 ** 0, 2 ** (1.0 / 3.0), 2 ** (2.0 / 3.0)], keras.backend.floatx()),
+    sizes       = [32, 64, 128, 256, 512],
+    strides     = [8, 16, 32, 64, 128],
+    ratios      = np.array([0.5, 1, 2], keras.backend.floatx()),
+    scales      = np.array([2 ** 0, 2 ** (1.0 / 3.0), 2 ** (2.0 / 3.0)], keras.backend.floatx()),
+    fixedheight = False,
 )
 
 
@@ -232,7 +234,8 @@ def anchors_for_shape(
         anchors = generate_anchors(
             base_size=anchor_params.sizes[idx],
             ratios=anchor_params.ratios,
-            scales=anchor_params.scales
+            scales=anchor_params.scales,
+            fixedheight=anchor_params.fixedheight
         )
         shifted_anchors = shift(image_shapes[idx], anchor_params.strides[idx], anchors)
         all_anchors     = np.append(all_anchors, shifted_anchors, axis=0)
@@ -272,7 +275,7 @@ def shift(shape, stride, anchors):
     return all_anchors
 
 
-def generate_anchors(base_size=16, ratios=None, scales=None):
+def generate_anchors(base_size=16, ratios=None, scales=None, fixedheight=False):
     """
     Generate anchor (reference) windows by enumerating aspect ratios X
     scales w.r.t. a reference window.
@@ -292,12 +295,15 @@ def generate_anchors(base_size=16, ratios=None, scales=None):
     # scale base_size
     anchors[:, 2:] = base_size * np.tile(scales, (2, len(ratios))).T
 
-    # compute areas of anchors
-    areas = anchors[:, 2] * anchors[:, 3]
+    if not fixedheight:
+        # compute areas of anchors
+        areas = anchors[:, 2] * anchors[:, 3]
 
-    # correct for ratios
-    anchors[:, 2] = np.sqrt(areas / np.repeat(ratios, len(scales)))
-    anchors[:, 3] = anchors[:, 2] * np.repeat(ratios, len(scales))
+        # correct for ratios
+        anchors[:, 2] = np.sqrt(areas / np.repeat(ratios, len(scales)))
+        anchors[:, 3] = anchors[:, 2] * np.repeat(ratios, len(scales))
+    else:
+        anchors[:, 2] = anchors[:, 2] / np.repeat(ratios, len(scales))
 
     # transform from (x_ctr, y_ctr, w, h) -> (x1, y1, x2, y2)
     anchors[:, 0::2] -= np.tile(anchors[:, 2] * 0.5, (2, 1)).T
