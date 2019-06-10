@@ -240,7 +240,7 @@ def anchors_for_shape(
         shifted_anchors = shift(image_shapes[idx], anchor_params.strides[idx], anchors)
         all_anchors     = np.append(all_anchors, shifted_anchors, axis=0)
 
-    print("Number of anchors in total: " + str(all_anchors.shape))
+    # print("Number of anchors in total: " + str(all_anchors.shape))
 
     return all_anchors
 
@@ -290,8 +290,8 @@ def generate_anchors(base_size=16, ratios=None, scales=None, fixedheight=False):
         scales = AnchorParameters.default.scales
 
     num_anchors = len(ratios) * len(scales)
-    print("Anchors are FixedHeight? " + str(fixedheight))
-    print("Number of anchors per position: " + str(num_anchors))
+    # print("Anchors are FixedHeight? " + str(fixedheight))
+    # print("Number of anchors per position: " + str(num_anchors))
 
     # initialize output anchors
     anchors = np.zeros((num_anchors, 4))
@@ -313,8 +313,8 @@ def generate_anchors(base_size=16, ratios=None, scales=None, fixedheight=False):
     anchors[:, 0::2] -= np.tile(anchors[:, 2] * 0.5, (2, 1)).T
     anchors[:, 1::2] -= np.tile(anchors[:, 3] * 0.5, (2, 1)).T
 
-    print("Base Anchor Definition:")
-    print(anchors)
+    # print("Base Anchor Definition:")
+    # print(anchors)
 
     return anchors
 
