@@ -44,5 +44,6 @@ def parse_anchor_parameters(config):
     sizes   = list(map(int, config['anchor_parameters']['sizes'].split(' ')))
     strides = list(map(int, config['anchor_parameters']['strides'].split(' ')))
     fixedh  = config['anchor_parameters']['fixedheight'].strip().upper() == 'TRUE'
+    feature_layers = list(map(str, config['anchor_parameters']['feature_layers'].split(' ')))
 
-    return AnchorParameters(sizes, strides, ratios, scales, fixedh)
+    return AnchorParameters(sizes, strides, ratios, scales, fixedh, feature_layers)
