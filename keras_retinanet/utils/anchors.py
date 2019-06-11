@@ -244,7 +244,8 @@ def anchors_for_shape(
         shifted_anchors = shift(image_shapes[idx], anchor_params.strides[idx], anchors)
         all_anchors     = np.append(all_anchors, shifted_anchors, axis=0)
 
-    # print("Number of anchors in total: " + str(all_anchors.shape))
+    print("Image shape: " + str(image_shape))
+    print("Number of anchors in total: " + str(all_anchors.shape))
 
     return all_anchors
 
