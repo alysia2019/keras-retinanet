@@ -22,7 +22,7 @@ import numpy as np
 
 
 class Anchors(keras.layers.Layer):
-    """ Keras layer for generating achors for a given shape.
+    """ Keras layer for generating anchors for a given shape.
     """
 
     def __init__(self, size, stride, ratios=None, scales=None, fixedheight=False, *args, **kwargs):

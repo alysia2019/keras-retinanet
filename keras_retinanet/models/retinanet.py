@@ -211,7 +211,7 @@ def __build_anchors(anchor_parameters, features):
     """ Builds anchors for the shape of the features from FPN.
 
     Args
-        anchor_parameters : Parameteres that determine how anchors are generated.
+        anchor_parameters : Parameters that determine how anchors are generated.
         features          : The FPN features.
 
     Returns
