@@ -228,6 +228,7 @@ def __build_anchors(anchor_parameters, features):
             stride=anchor_parameters.strides[i],
             ratios=anchor_parameters.ratios,
             scales=anchor_parameters.scales,
+            fixedheight=anchor_parameters.fixedheight,
             name='anchors_{}'.format(i)
         )(f) for i, f in enumerate(features)
     ]

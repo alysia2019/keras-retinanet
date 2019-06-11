@@ -25,7 +25,7 @@ class Anchors(keras.layers.Layer):
     """ Keras layer for generating achors for a given shape.
     """
 
-    def __init__(self, size, stride, ratios=None, scales=None, *args, **kwargs):
+    def __init__(self, size, stride, ratios=None, scales=None, fixedheight=False, *args, **kwargs):
         """ Initializer for an Anchors layer.
 
         Args
@@ -38,6 +38,7 @@ class Anchors(keras.layers.Layer):
         self.stride = stride
         self.ratios = ratios
         self.scales = scales
+        self.fixedheight = fixedheight
 
         if ratios is None:
             self.ratios  = utils_anchors.AnchorParameters.default.ratios
@@ -53,6 +54,7 @@ class Anchors(keras.layers.Layer):
             base_size=size,
             ratios=ratios,
             scales=scales,
+            fixedheight=fixedheight
         ))
 
         super(Anchors, self).__init__(*args, **kwargs)
@@ -88,6 +90,7 @@ class Anchors(keras.layers.Layer):
             'stride' : self.stride,
             'ratios' : self.ratios.tolist(),
             'scales' : self.scales.tolist(),
+            'fixedheight' : self.fixedheight
         })
 
         return config
