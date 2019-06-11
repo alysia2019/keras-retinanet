@@ -234,7 +234,7 @@ def __build_anchors(anchor_parameters, features):
     ]
 
     if len(anchors) == 1:
-        return keras.layers.Lambda(lambda x: x, name='anchors')(anchors[0])
+        return anchors[0] #keras.layers.Lambda(lambda x: x, name='anchors')(anchors[0])
     else:
         return keras.layers.Concatenate(axis=1, name='anchors')(anchors)
 
