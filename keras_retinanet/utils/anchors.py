@@ -30,12 +30,13 @@ class AnchorParameters:
         scales  : List of scales to use per location in a feature map.
     """
     def __init__(self, sizes, strides, ratios, scales, fixedheight, feature_layers):
-        self.sizes       = sizes
-        self.strides     = strides
-        self.ratios      = ratios
-        self.scales      = scales
-        self.fixedheight = fixedheight
+        self.sizes          = sizes
+        self.strides        = strides
+        self.ratios         = ratios
+        self.scales         = scales
+        self.fixedheight    = fixedheight
         self.feature_layers = feature_layers
+        self.pyramid_levels = pyramid_levels
 
     def num_anchors(self):
         return len(self.ratios) * len(self.scales)
@@ -45,12 +46,13 @@ class AnchorParameters:
 The default anchor parameters.
 """
 AnchorParameters.default = AnchorParameters(
-    sizes       = [32, 64, 128, 256, 512],
-    strides     = [8, 16, 32, 64, 128],
-    ratios      = np.array([0.5, 1, 2], keras.backend.floatx()),
-    scales      = np.array([2 ** 0, 2 ** (1.0 / 3.0), 2 ** (2.0 / 3.0)], keras.backend.floatx()),
-    fixedheight = False,
+    sizes          = [32, 64, 128, 256, 512],
+    strides        = [8, 16, 32, 64, 128],
+    ratios         = np.array([0.5, 1, 2], keras.backend.floatx()),
+    scales         = np.array([2 ** 0, 2 ** (1.0 / 3.0), 2 ** (2.0 / 3.0)], keras.backend.floatx()),
+    fixedheight    = False,
     feature_layers = ['P3', 'P4', 'P5', 'P6', 'P7'],
+    pyramid_levels = [3, 4, 5, 6, 7],
 )
 
 
@@ -221,7 +223,7 @@ def anchors_for_shape(
     """
 
     if pyramid_levels is None:
-        pyramid_levels = [3, 4, 5, 6, 7]
+        pyramid_levels = anchor_params.pyramid_levels
 
     if anchor_params is None:
         anchor_params = AnchorParameters.default

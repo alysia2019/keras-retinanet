@@ -45,5 +45,6 @@ def parse_anchor_parameters(config):
     strides = list(map(int, config['anchor_parameters']['strides'].split(' ')))
     fixedh  = config['anchor_parameters']['fixedheight'].strip().upper() == 'TRUE'
     feature_layers = list(map(str, config['anchor_parameters']['feature_layers'].split(' ')))
+    pyramid_levels = list(map(int, config['anchor_parameters']['pyramid_levels'].split(' ')))
 
-    return AnchorParameters(sizes, strides, ratios, scales, fixedh, feature_layers)
+    return AnchorParameters(sizes, strides, ratios, scales, fixedh, feature_layers, pyramid_levels)
