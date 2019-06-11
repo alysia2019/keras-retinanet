@@ -317,8 +317,8 @@ def generate_anchors(base_size=16, ratios=None, scales=None, fixedheight=False):
     anchors[:, 0::2] -= np.tile(anchors[:, 2] * 0.5, (2, 1)).T
     anchors[:, 1::2] -= np.tile(anchors[:, 3] * 0.5, (2, 1)).T
 
-    # print("Base Anchor Definition:")
-    # print(anchors)
+    print("Base Anchor Definition:")
+    print(anchors)
 
     return anchors
 
