@@ -29,7 +29,7 @@ class AnchorParameters:
         ratios  : List of ratios to use per location in a feature map.
         scales  : List of scales to use per location in a feature map.
     """
-    def __init__(self, sizes, strides, ratios, scales, fixedheight, feature_layers):
+    def __init__(self, sizes, strides, ratios, scales, fixedheight, feature_layers, pyramid_levels):
         self.sizes          = sizes
         self.strides        = strides
         self.ratios         = ratios
