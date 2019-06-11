@@ -186,6 +186,8 @@ def run(generator, args, anchor_params):
                 annotations['bboxes'] *= image_scale
 
             anchors = anchors_for_shape(image.shape, anchor_params=anchor_params)
+            print("Total  anchors for this image: " + str(len(anchors)))
+
             positive_indices, _, max_indices = compute_gt_annotations(anchors, annotations['bboxes'])
 
             # draw anchors on the image
