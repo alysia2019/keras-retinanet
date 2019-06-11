@@ -511,4 +511,7 @@ def main(args=None):
 
 
 if __name__ == '__main__':
+    import tensorflow as tf
+    tf.enable_eager_execution()
+    
     main()

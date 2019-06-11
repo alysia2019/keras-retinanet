@@ -71,7 +71,8 @@ class Anchors(keras.layers.Layer):
             anchors = backend.shift(features_shape[1:3], self.stride, self.anchors)
         anchors = keras.backend.tile(keras.backend.expand_dims(anchors, axis=0), (features_shape[0], 1, 1))
 
-        return keras.backend.print_tensor(anchors, message="anchors layer produces: ")
+        print("Anchor Layer: " + str(anchors.shape))
+        return anchors
 
     def compute_output_shape(self, input_shape):
         if None not in input_shape[1:]:
