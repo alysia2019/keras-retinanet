@@ -39,6 +39,7 @@ class Anchors(keras.layers.Layer):
         self.ratios = ratios
         self.scales = scales
         self.fixedheight = fixedheight
+        print("Creating prediction anchors with fixedheight="+str(fixedheight))
 
         if ratios is None:
             self.ratios  = utils_anchors.AnchorParameters.default.ratios
