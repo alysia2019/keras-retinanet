@@ -17,7 +17,7 @@ limitations under the License.
 import keras
 from .. import backend
 from ..utils import anchors as utils_anchors
-
+import tensorflow as tf
 import numpy as np
 
 
@@ -71,11 +71,7 @@ class Anchors(keras.layers.Layer):
             anchors = backend.shift(features_shape[1:3], self.stride, self.anchors)
         anchors = keras.backend.tile(keras.backend.expand_dims(anchors, axis=0), (features_shape[0], 1, 1))
 
-        def print_layer(x):
-            print(x.shape)
-            return x
-
-        anchors = keras.layers.Lambda(print_layer)(anchors)
+        anchors = tf.Print(anchors, [tf.shape(anchors)], message="The anchors shape is:")
 
         return anchors
 
