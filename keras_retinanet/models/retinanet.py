@@ -345,6 +345,8 @@ def retinanet_bbox(
     boxes = layers.RegressBoxes(name='boxes')([anchors, regression])
     boxes = layers.ClipBoxes(name='clipped_boxes')([model.inputs[0], boxes])
 
+    boxes = tf.Print(boxes, [tf.shape(boxes), tf.shape(anchors), tf.shape(classification)], message="The boxex shape is:")
+
     # filter detections (apply NMS / score threshold / select top-k)
     detections = layers.FilterDetections(
         nms                   = nms,
