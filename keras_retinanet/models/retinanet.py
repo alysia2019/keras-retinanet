@@ -290,7 +290,7 @@ def retinanet(
     # for all pyramid levels, run available submodels
     pyramids = __build_pyramid(submodels, features)
 
-    print(pyramids)
+    # print(pyramids)
     tmp_model = keras.models.Model(inputs=inputs, outputs=pyramids)
 
     features = []
@@ -359,10 +359,10 @@ def retinanet_bbox(
     boxes = layers.ClipBoxes(name='clipped_boxes')([model.inputs[0], boxes])
 
 
-    def print_layer(x):
-        print(x.shape)
-        return x
-    boxes = keras.layers.Lambda(print_layer)(boxes)
+    # def print_layer(x):
+    #     print(x.shape)
+    #     return x
+    # boxes = keras.layers.Lambda(print_layer)(boxes)
     # tf.Print(boxes, [tf.shape(boxes), tf.shape(anchors), tf.shape(classification)], message="The boxex shape is:")
 
     # filter detections (apply NMS / score threshold / select top-k)
