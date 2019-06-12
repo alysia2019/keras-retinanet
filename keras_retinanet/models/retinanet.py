@@ -192,7 +192,10 @@ def __build_model_pyramid(name, model, features):
     Returns
         A tensor containing the response from the submodel on the FPN features.
     """
-    return keras.layers.Concatenate(axis=1, name=name)([model(f) for f in features])
+    if len(features) == 1:
+        return model(features[0])
+    else:
+        return keras.layers.Concatenate(axis=1, name=name)([model(f) for f in features])
 
 
 def __build_pyramid(models, features):
