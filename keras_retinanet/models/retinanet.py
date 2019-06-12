@@ -19,6 +19,7 @@ from .. import initializers
 from .. import layers
 from ..utils.anchors import AnchorParameters
 from . import assert_training_model
+import tensorflow as tf
 
 
 def default_classification_model(
