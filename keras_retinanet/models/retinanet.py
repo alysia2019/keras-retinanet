@@ -295,7 +295,7 @@ def retinanet(
 
     features = []
     for layer in feature_layers:
-        features.append(tmp_model.get_layer(layer))
+        features.append(tmp_model.get_layer(layer).output)
     pyramids = __build_pyramid(submodels, features)
 
     return keras.models.Model(inputs=inputs, outputs=pyramids, name=name)
