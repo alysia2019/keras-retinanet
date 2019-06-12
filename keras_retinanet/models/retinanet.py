@@ -291,6 +291,7 @@ def retinanet(
     # for all pyramid levels, run available submodels
     pyramids = __build_pyramid(submodels, features)
 
+    print(pyramids)
     # tmp_model = keras.models.Model(inputs=inputs, outputs=pyramids)
     #
     # features = []
