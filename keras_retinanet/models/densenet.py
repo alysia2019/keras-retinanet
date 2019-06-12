@@ -70,7 +70,7 @@ class DenseNetBackbone(Backbone):
         return preprocess_image(inputs, mode='tf')
 
 
-def densenet_retinanet(num_classes, backbone='densenet121', inputs=None, modifier=None, **kwargs):
+def densenet_retinanet(num_classes, feature_layers, backbone='densenet121', inputs=None, modifier=None, **kwargs):
     """ Constructs a retinanet model using a densenet backbone.
 
     Args
@@ -100,6 +100,6 @@ def densenet_retinanet(num_classes, backbone='densenet121', inputs=None, modifie
         model = modifier(model)
 
     # create the full model
-    model = retinanet.retinanet(inputs=inputs, num_classes=num_classes, backbone_layers=model.outputs, **kwargs)
+    model = retinanet.retinanet(inputs=inputs, num_classes=num_classes, backbone_layers=model.outputs, feature_layers=feature_layers, **kwargs)
 
     return model

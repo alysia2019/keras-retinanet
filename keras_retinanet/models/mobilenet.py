@@ -77,7 +77,7 @@ class MobileNetBackbone(Backbone):
         return preprocess_image(inputs, mode='tf')
 
 
-def mobilenet_retinanet(num_classes, backbone='mobilenet224_1.0', inputs=None, modifier=None, **kwargs):
+def mobilenet_retinanet(num_classes, feature_layers, backbone='mobilenet224_1.0', inputs=None, modifier=None, **kwargs):
     """ Constructs a retinanet model using a mobilenet backbone.
 
     Args
@@ -106,4 +106,4 @@ def mobilenet_retinanet(num_classes, backbone='mobilenet224_1.0', inputs=None, m
     if modifier:
         backbone = modifier(backbone)
 
-    return retinanet.retinanet(inputs=inputs, num_classes=num_classes, backbone_layers=backbone.outputs, **kwargs)
+    return retinanet.retinanet(inputs=inputs, num_classes=num_classes, backbone_layers=backbone.outputs, feature_layers=feature_layers, **kwargs)

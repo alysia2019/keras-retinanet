@@ -66,7 +66,7 @@ class VGGBackbone(Backbone):
         return preprocess_image(inputs, mode='caffe')
 
 
-def vgg_retinanet(num_classes, backbone='vgg16', inputs=None, modifier=None, **kwargs):
+def vgg_retinanet(num_classes, feature_layers, backbone='vgg16', inputs=None, modifier=None, **kwargs):
     """ Constructs a retinanet model using a vgg backbone.
 
     Args
@@ -96,4 +96,4 @@ def vgg_retinanet(num_classes, backbone='vgg16', inputs=None, modifier=None, **k
     # create the full model
     layer_names = ["block3_pool", "block4_pool", "block5_pool"]
     layer_outputs = [vgg.get_layer(name).output for name in layer_names]
-    return retinanet.retinanet(inputs=inputs, num_classes=num_classes, backbone_layers=layer_outputs, **kwargs)
+    return retinanet.retinanet(inputs=inputs, num_classes=num_classes, backbone_layers=layer_outputs, feature_layers=feature_layers, **kwargs)

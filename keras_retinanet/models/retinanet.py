@@ -247,6 +247,7 @@ def retinanet(
     inputs,
     backbone_layers,
     num_classes,
+    feature_layers,
     num_anchors             = None,
     create_pyramid_features = __create_pyramid_features,
     submodels               = None,
@@ -286,18 +287,16 @@ def retinanet(
     # compute pyramid features as per https://arxiv.org/abs/1708.02002
     features = create_pyramid_features(C3, C4, C5)
 
-    features = [features[0]]
-
     # for all pyramid levels, run available submodels
     pyramids = __build_pyramid(submodels, features)
 
     print(pyramids)
-    # tmp_model = keras.models.Model(inputs=inputs, outputs=pyramids)
-    #
-    # features = []
-    # for layer in layers:
-    #     features.append(model.get_layer(layer))
-    # pyramids = __build_pyramid(submodels, features)
+    tmp_model = keras.models.Model(inputs=inputs, outputs=pyramids)
+
+    features = []
+    for layer in feature_layers:
+        features.append(tmp_model.get_layer(layer))
+    pyramids = __build_pyramid(submodels, features)
 
     return keras.models.Model(inputs=inputs, outputs=pyramids, name=name)
 
@@ -340,7 +339,7 @@ def retinanet_bbox(
 
     # create RetinaNet model
     if model is None:
-        model = retinanet(num_anchors=anchor_params.num_anchors(), **kwargs)
+        model = retinanet(num_anchors=anchor_params.num_anchors(), feature_layers=anchor_params.feature_layers, **kwargs)
     else:
         assert_training_model(model)
 
