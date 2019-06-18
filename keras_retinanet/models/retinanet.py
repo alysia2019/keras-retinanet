@@ -163,7 +163,7 @@ def __create_pyramid_features(C3, C4, C5, feature_size=256):
     return [P3, P4, P5, P6, P7]
 
 
-def default_submodels(num_classes, num_anchors):
+def default_submodels(num_classes, num_anchors, feature_size=256):
     """ Create a list of default submodels used for object detection.
 
     The default submodels contains a regression submodel and a classification submodel.
@@ -176,8 +176,8 @@ def default_submodels(num_classes, num_anchors):
         A list of tuple, where the first element is the name of the submodel and the second element is the submodel itself.
     """
     return [
-        ('regression', default_regression_model(4, num_anchors)),
-        ('classification', default_classification_model(num_classes, num_anchors))
+        ('regression', default_regression_model(4, num_anchors, pyramid_feature_size=feature_size)),
+        ('classification', default_classification_model(num_classes, num_anchors, pyramid_feature_size=feature_size))
     ]
 
 
@@ -193,16 +193,40 @@ def __build_model_pyramid(name, model, features):
         A tensor containing the response from the submodel on the FPN features.
     """
     if len(features) == 1:
+        # if we have a single feature layer and it doesn't match the dimensionality of the model
+        # we add a 1x1 conv layer to fix:
+        # if features[0].shape[3] != model.inputs[0].shape[3]:
+        #     input = keras.layers.Input(features[0].shape)
+        #     features_resampled = keras.layers.Conv2D(model.inputs[0].shape[3], kernel_size=1, strides=1, padding='same',
+        #                                              name='feature_resampling')(input)
+        #     output = model(features_resampled)
+        #     model = Model(inputs=keras.layers.Input(features[0].shape), outputs=output)
+
         return keras.layers.Lambda(lambda x: x, name=name)(model(features[0]))
     else:
-        return keras.layers.Concatenate(axis=1, name=name)([model(f) for f in features])
+        inputs = []
+        for f in features:
+            # if we have a multiple feature layers and they current layer doesn't match the dimensionality of the model
+            # we add a 1x1 conv layer to fix:
+            # if features[0].shape[3] != model.inputs[0].shape[3]:
+            #     input = keras.layers.Input(features[0].shape)
+            #     features_resampled = keras.layers.Conv2D(model.inputs[0].shape[3], kernel_size=1, strides=1,
+            #                                              padding='same',
+            #                                              name='feature_resampling')(input)
+            #     output = model(features_resampled)
+            #     newmodel = Model(inputs=input, outputs=output)
+            #     inputs.append(newmodel(f))
+            # else:
+            inputs.append(model(f))
+
+        return keras.layers.Concatenate(axis=1, name=name)(inputs)
 
 
 def __build_pyramid(models, features):
     """ Applies all submodels to each FPN level.
 
     Args
-        models   : List of sumodels to run on each pyramid level (by default only regression, classifcation).
+        models   : List of submodels to run on each pyramid level (by default only regression, classifcation).
         features : The FPN features.
 
     Returns
@@ -251,7 +275,8 @@ def retinanet(
     num_anchors             = None,
     create_pyramid_features = __create_pyramid_features,
     submodels               = None,
-    name                    = 'retinanet'
+    name                    = 'retinanet',
+    feature_size            = 256
 ):
     """ Construct a RetinaNet model on top of a backbone.
 
@@ -280,17 +305,18 @@ def retinanet(
         num_anchors = AnchorParameters.default.num_anchors()
 
     if submodels is None:
-        submodels = default_submodels(num_classes, num_anchors)
+        submodels = default_submodels(num_classes, num_anchors, feature_size=feature_size)
 
     C3, C4, C5 = backbone_layers
 
     # compute pyramid features as per https://arxiv.org/abs/1708.02002
-    features = create_pyramid_features(C3, C4, C5)
+    features = create_pyramid_features(C3, C4, C5, feature_size=feature_size)
 
     # for all pyramid levels, run available submodels
     pyramids = __build_pyramid(submodels, features)
 
-    # print(pyramids)
+    # Dirty hack: now we have the default model, we rebuild it by just selecting the
+    # features we're interested in
     tmp_model = keras.models.Model(inputs=inputs, outputs=pyramids)
 
     features = []
@@ -339,7 +365,8 @@ def retinanet_bbox(
 
     # create RetinaNet model
     if model is None:
-        model = retinanet(num_anchors=anchor_params.num_anchors(), feature_layers=anchor_params.feature_layers, **kwargs)
+        model = retinanet(num_anchors=anchor_params.num_anchors(), feature_layers=anchor_params.feature_layers,
+                          feature_size=anchor_params.feature_size, **kwargs)
     else:
         assert_training_model(model)
 

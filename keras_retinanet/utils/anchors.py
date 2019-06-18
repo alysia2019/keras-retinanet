@@ -29,7 +29,7 @@ class AnchorParameters:
         ratios  : List of ratios to use per location in a feature map.
         scales  : List of scales to use per location in a feature map.
     """
-    def __init__(self, sizes, strides, ratios, scales, fixedheight, feature_layers, pyramid_levels):
+    def __init__(self, sizes, strides, ratios, scales, fixedheight, feature_layers, pyramid_levels, feature_size):
         self.sizes          = sizes
         self.strides        = strides
         self.ratios         = ratios
@@ -37,6 +37,7 @@ class AnchorParameters:
         self.fixedheight    = fixedheight
         self.feature_layers = feature_layers
         self.pyramid_levels = pyramid_levels
+        self.feature_size   = feature_size
 
     def num_anchors(self):
         return len(self.ratios) * len(self.scales)
@@ -53,6 +54,7 @@ AnchorParameters.default = AnchorParameters(
     fixedheight    = False,
     feature_layers = ['P3', 'P4', 'P5', 'P6', 'P7'],
     pyramid_levels = [3, 4, 5, 6, 7],
+    feature_size   = 256,
 )
 
 
