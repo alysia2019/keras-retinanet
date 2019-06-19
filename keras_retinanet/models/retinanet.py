@@ -195,12 +195,13 @@ def __build_model_pyramid(name, model, features):
     if len(features) == 1:
         # if we have a single feature layer and it doesn't match the dimensionality of the model
         # we add a 1x1 conv layer to fix:
-        # if features[0].shape[3] != model.inputs[0].shape[3]:
-        #     input = keras.layers.Input(features[0].shape)
-        #     features_resampled = keras.layers.Conv2D(model.inputs[0].shape[3], kernel_size=1, strides=1, padding='same',
-        #                                              name='feature_resampling')(input)
-        #     output = model(features_resampled)
-        #     model = Model(inputs=keras.layers.Input(features[0].shape), outputs=output)
+        if features[0].shape[3] != model.inputs[0].shape[3]:
+            input = keras.layers.Input(batch_shape=keras.backend.int_shape(features[0]))
+            features_resampled = keras.layers.Conv2D(keras.backend.int_shape(model.inputs[0])[3], kernel_size=1,
+                                                     strides=1, padding='same', name='feature_resampling')
+            features_resampled = features_resampled(input)
+            output = model(features_resampled)
+            model = keras.Model(inputs=input, outputs=output)
 
         return keras.layers.Lambda(lambda x: x, name=name)(model(features[0]))
     else:
